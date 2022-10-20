@@ -1,16 +1,16 @@
 use reqwest::Client;
 use serde::de::DeserializeOwned;
 use crate::error::FishFishError;
-use crate::data::{Domain, Token, DomainCategory};
+use crate::data::{Domain, Token, DomainCategory, Permission};
 use crate::client::{FishFishClient, FishFishRequestClient};
-use crate::endpoints::{CreateDomainEndpoint, CreateSessionEndpoint};
+use crate::endpoints::{CreateDomainEndpoint, CreateSessionEndpoint, UpdateDomainEndpoint};
 use crate::request::web_request::AuthWebRequest;
 
 pub struct AuthFishFishClient {
     pub(crate) http: Client,
     pub(crate) token: String,
     pub(crate) session: Option<Token>,
-    pub(crate) permissions: Option<Vec<String>>,
+    pub(crate) permissions: Option<Vec<Permission>>,
 }
 
 impl FishFishRequestClient for AuthFishFishClient {}
@@ -26,7 +26,16 @@ impl AuthFishFishClient {
         }).await
     }
 
-    pub async fn create_session(&mut self, permissions: Option<Vec<String>>) -> Result<Token, FishFishError> {
+    pub async fn update_domain<S1: ToString, S2: ToString>(&mut self, domain: S1, category: Option<DomainCategory>, description: Option<S2>, target: Option<String>) -> Result<Domain, FishFishError> {
+        self.invoke_auth(UpdateDomainEndpoint {
+            domain: domain.to_string(),
+            description: description.map(|d| d.to_string()),
+            target,
+            category,
+        }).await
+    }
+
+    pub async fn create_session(&mut self, permissions: Option<Vec<Permission>>) -> Result<Token, FishFishError> {
         self.permissions = permissions.clone();
         self.invoke_auth(CreateSessionEndpoint { permissions }).await
     }

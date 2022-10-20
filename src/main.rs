@@ -6,9 +6,6 @@ mod client;
 
 use crate::client::{FishFish, FishFishRequestClient};
 
-use crate::data::DomainCategory;
-use crate::endpoints::CreateDomainEndpoint;
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut default_client = FishFish::new()?;

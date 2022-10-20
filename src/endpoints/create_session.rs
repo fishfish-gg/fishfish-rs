@@ -1,14 +1,14 @@
 use async_trait::async_trait;
 use reqwest::{Body, Method};
 use serde::Serialize;
-use crate::data::{Token};
+use crate::data::{Permission, Token};
 use crate::error::FishFishError;
 use crate::request::{Endpoint};
 use crate::request::web_request::AuthWebRequest;
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone, Default)]
 pub struct CreateSessionEndpoint {
-    pub permissions: Option<Vec<String>>,
+    pub permissions: Option<Vec<Permission>>,
 }
 
 impl Endpoint for CreateSessionEndpoint {
